@@ -5,17 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BaseR — Farcaster Bridge</title>
 
+    <!-- OG / Twitter -->
     <meta property="og:title" content="BaseR — Farcaster Bridge" />
     <meta property="og:description" content="BaseR'ı Farcaster Mini App içinde, cüzdan pas-through ile kullan." />
-    <meta property="og:image" content="https://baser.vercel.app/og.png" />
+    <meta property="og:image" content="https://baser-qh0.caffeine.xyz/og.png" />
     <meta name="twitter:card" content="summary_large_image" />
 
+    <!-- Farcaster Frame Manifest -->
     <meta
       name="fc:frame"
       content='{
         "version":"1",
-        "imageUrl":"https://baser.vercel.app/og.png",
-        "button":{"title":"Open BaseR","action":{"type":"launch_miniapp","url":"https://baser.vercel.app"}},
+        "imageUrl":"https://baser-qh0.caffeine.xyz/og.png",
+        "button":{"title":"Open BaseR","action":{"type":"launch_miniapp","url":"https://mrvoodoonft.github.io/BaseRFarcaster/"}},
         "accountAssociation":{
           "header":"eyJmaWQiOjM4MzYxMiwidHlwZSI6ImF1dGgiLCJrZXkiOiIweEY1NWMwOWJiMzc4MzlmOGFiZWIzM0Q1QTI1NmZhNjU0OUM4MjlmQ0IifQ",
           "payload":"eyJkb21haW4iOiJtcnZvb2Rvb25mdC5naXRodWIuaW8ifQ==",
@@ -38,15 +40,17 @@
 
     <iframe
       id="baser-frame"
-      src="https://baser.vercel.app/"
+      src="https://baser-qh0.caffeine.xyz/"
       allow="clipboard-read; clipboard-write; accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
     ></iframe>
 
     <script type="module">
       import { sdk } from "https://miniapps.farcaster.xyz/sdk.js";
+
       async function initFarcasterWallet() {
         const loadingEl = document.getElementById("loading");
         if (window.ethereum) { loadingEl.style.display = "none"; return; }
+
         try {
           const provider = await sdk.wallet.getEthereumProvider();
           if (provider) {
@@ -61,6 +65,7 @@
           loadingEl.style.display = "none";
         }
       }
+
       initFarcasterWallet();
     </script>
   </body>
