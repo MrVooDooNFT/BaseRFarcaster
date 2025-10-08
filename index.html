@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BaseR — Farcaster Bridge</title>
+
+    <meta property="og:title" content="BaseR — Farcaster Bridge" />
+    <meta property="og:description" content="BaseR'ı Farcaster Mini App içinde, cüzdan pas-through ile kullan." />
+    <meta property="og:image" content="https://baser.vercel.app/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta
+      name="fc:frame"
+      content='{
+        "version":"1",
+        "imageUrl":"https://baser.vercel.app/og.png",
+        "button":{"title":"Open BaseR","action":{"type":"launch_miniapp","url":"https://baser.vercel.app"}},
+        "accountAssociation":{
+          "header":"eyJmaWQiOjM4MzYxMiwidHlwZSI6ImF1dGgiLCJrZXkiOiIweEY1NWMwOWJiMzc4MzlmOGFiZWIzM0Q1QTI1NmZhNjU0OUM4MjlmQ0IifQ",
+          "payload":"eyJkb21haW4iOiJtcnZvb2Rvb25mdC5naXRodWIuaW8ifQ==",
+          "signature":"0x7aafc0ef10d6b4ad95a6b82b6c70ec9db31f278c6a1e6b7b1b1f40d9a63d2f9b5a26cbb21f12a3d4dfcc9cecc9ad9a248d820e80f1e8c31a2a04103fb8c3cfe61b"
+        }
+      }'
+    />
+
+    <style>
+      html, body { height: 100%; margin: 0; background:#0b0b0b; color:#fff; font-family: system-ui, sans-serif; display:flex; flex-direction:column; }
+      .topbar { padding:10px 14px; font-size:14px; color:#aaa; }
+      .loading { position: fixed; inset: 0; display:flex; align-items:center; justify-content:center; color:#bbb; font-size:14px; }
+      iframe { border:0; width:100%; height:100%; flex:1; }
+    </style>
+  </head>
+
+  <body>
+    <div class="topbar">BaseR · Farcaster Bridge</div>
+    <div class="loading" id="loading">Farcaster cüzdan başlatılıyor...</div>
+
+    <iframe
+      id="baser-frame"
+      src="https://baser.vercel.app/"
+      allow="clipboard-read; clipboard-write; accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+    ></iframe>
+
+    <script type="module">
+      import { sdk } from "https://miniapps.farcaster.xyz/sdk.js";
+      async function initFarcasterWallet() {
+        const loadingEl = document.getElementById("loading");
+        if (window.ethereum) { loadingEl.style.display = "none"; return; }
+        try {
+          const provider = await sdk.wallet.getEthereumProvider();
+          if (provider) {
+            window.ethereum = provider;
+            console.log("✅ Farcaster wallet window.ethereum olarak atandı.");
+          } else {
+            console.warn("⚠️ Farcaster wallet bulunamadı — view-only.");
+          }
+        } catch (err) {
+          console.error("❌ Farcaster wallet init hatası:", err);
+        } finally {
+          loadingEl.style.display = "none";
+        }
+      }
+      initFarcasterWallet();
+    </script>
+  </body>
+</html>
