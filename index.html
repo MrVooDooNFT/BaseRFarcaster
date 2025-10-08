@@ -2,7 +2,10 @@
 <html lang="tr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
     <title>BaseR — Farcaster Bridge</title>
 
     <!-- OG / Twitter -->
@@ -27,10 +30,26 @@
     />
 
     <style>
-      html, body { height: 100%; margin: 0; background:#0b0b0b; color:#fff; font-family: system-ui, sans-serif; display:flex; flex-direction:column; }
+      :root { -webkit-text-size-adjust: 100%; }
+      /* Dış sayfanın scroll’unu kapatma, içeriği min 1 viewport yüksekliğinde tut */
+      html, body { min-height: 100vh; margin: 0; }
+      body {
+        background:#0b0b0b; color:#fff; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        display:flex; flex-direction:column; overflow:auto;
+      }
       .topbar { padding:10px 14px; font-size:14px; color:#aaa; }
-      .loading { position: fixed; inset: 0; display:flex; align-items:center; justify-content:center; color:#bbb; font-size:14px; }
-      iframe { border:0; width:100%; height:100%; flex:1; }
+      .loading {
+        position: fixed; inset: 0; display:flex; align-items:center; justify-content:center;
+        color:#bbb; font-size:14px; pointer-events:none;
+      }
+      /* İframe’in kendi içinde scroll etmesine izin ver */
+      #frame-wrap { flex:1; min-height: 0; }
+      iframe {
+        border:0; display:block; width:100%;
+        height: 100dvh;               /* mobil için güvenli viewport */
+        overflow:auto;                 /* iç scroll bar */
+        -webkit-overflow-scrolling: touch; /* iOS momentum scroll */
+      }
     </style>
   </head>
 
@@ -38,26 +57,29 @@
     <div class="topbar">BaseR · Farcaster Bridge</div>
     <div class="loading" id="loading">Farcaster cüzdan başlatılıyor...</div>
 
-    <iframe
-      id="baser-frame"
-      src="https://baser-qh0.caffeine.xyz/"
-      allow="clipboard-read; clipboard-write; accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-    ></iframe>
+    <div id="frame-wrap">
+      <iframe
+        id="baser-frame"
+        src="https://baser-qh0.caffeine.xyz/"
+        scrolling="yes"
+        allow="clipboard-read; clipboard-write; accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+      ></iframe>
+    </div>
 
     <script type="module">
       import { sdk } from "https://miniapps.farcaster.xyz/sdk.js";
 
       async function initFarcasterWallet() {
         const loadingEl = document.getElementById("loading");
-        if (window.ethereum) { loadingEl.style.display = "none"; return; }
-
         try {
-          const provider = await sdk.wallet.getEthereumProvider();
-          if (provider) {
-            window.ethereum = provider;
-            console.log("✅ Farcaster wallet window.ethereum olarak atandı.");
-          } else {
-            console.warn("⚠️ Farcaster wallet bulunamadı — view-only.");
+          if (!window.ethereum) {
+            const provider = await sdk.wallet.getEthereumProvider();
+            if (provider) {
+              window.ethereum = provider;
+              console.log("✅ Farcaster wallet window.ethereum olarak atandı.");
+            } else {
+              console.warn("⚠️ Farcaster wallet bulunamadı — view-only.");
+            }
           }
         } catch (err) {
           console.error("❌ Farcaster wallet init hatası:", err);
@@ -65,7 +87,6 @@
           loadingEl.style.display = "none";
         }
       }
-
       initFarcasterWallet();
     </script>
   </body>
